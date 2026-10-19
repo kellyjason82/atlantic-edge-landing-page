@@ -106,6 +106,32 @@
   details[open] summary { border-bottom: 1px dashed #9bb8c6; }
   details .raw { padding: 16px 20px 6px; color: var(--muted); }
 
+  /* Prompts */
+  .prompt {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .prompt .when { font-weight: 800; color: var(--deep); font-size: .95rem; margin-bottom: 8px; }
+  .prompt blockquote {
+    margin: 0 0 10px; padding: 10px 14px; border-left: 4px solid var(--surf);
+    background: #eef8fb; border-radius: 8px;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: .88rem; line-height: 1.5;
+  }
+  .prompt .led { margin: 0; color: var(--muted); }
+
+  /* Timeline */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .stats div { background: var(--deep); color: #fff; border-radius: var(--radius); padding: 14px 16px; }
+  .stats b { display: block; font-size: 1.5rem; }
+  .stats span { font-size: .85rem; color: #d8eef6; }
+  .timeline { list-style: none; padding: 0 0 0 18px; margin: 0; border-left: 3px solid var(--surf); }
+  .timeline li { position: relative; padding: 0 0 14px 14px; margin: 0; }
+  .timeline li::before {
+    content: ""; position: absolute; left: -26px; top: 7px; width: 13px; height: 13px;
+    border-radius: 50%; background: #fff; border: 3px solid var(--sea);
+  }
+  .timeline time { display: block; font-weight: 800; color: var(--deep); font-size: .9rem; }
+
   .links a {
     display: flex; align-items: center; min-height: 60px; padding: 12px 18px;
     background: var(--sea); color: #fff; text-decoration: none;
@@ -134,6 +160,7 @@
       <li><a href="#task1">Task 1</a></li>
       <li><a href="#decisions">Decisions</a></li>
       <li><a href="#prompts">Prompts</a></li>
+      <li><a href="#timeline">Timeline</a></li>
       <li><a href="#caught">What Claude Code caught</a></li>
       <li><a href="#alpha">Alpha test</a></li>
       <li><a href="#honesty">Honesty notes</a></li>
@@ -235,7 +262,77 @@
   <!-- Prompts -->
   <section id="prompts">
     <h2>Prompts that mattered</h2>
-    <p><em>To be added.</em></p>
+    <p><em>Excerpts from my own prompts, taken from the Claude Code session logs (trimmed; times are local, 19 Oct 2026).</em></p>
+
+    <div class="prompt">
+      <div class="when">18:39 · Setup and privacy</div>
+      <blockquote>“Before making any commit, check what email git is using. If it's a personal email, set both repos to use my GitHub noreply address instead … put no personal details (name, student number, email, college) in any file or commit message.”</blockquote>
+      <p class="led">→ Both repos were set to use the GitHub noreply email and username before the first commit, and this privacy rule held for the rest of the build.</p>
+    </div>
+    <div class="prompt">
+      <div class="when">19:11 · CLAUDE.md</div>
+      <blockquote>“Create a CLAUDE.md file in this folder that will guide all future work on this project … the solution below is already agreed with the owner. Do not add features beyond it.”</blockquote>
+      <p class="led">→ A rules file fixing the three-view scope, the wet-hands design rules and privacy. Claude Code later flagged its own scope creep against it.</p>
+    </div>
+    <div class="prompt">
+      <div class="when">19:16 · Plan mode</div>
+      <blockquote>“Propose a plan for building this alpha: the structure inside index.html, the data model (sessions, bookings, cancellations), and the order you'll build the three views in. Flag any assumptions or questions before writing any code.”</blockquote>
+      <p class="led">→ The plan was proposed and approved by 19:21. The build then ran in five steps, each committed.</p>
+    </div>
+    <div class="prompt">
+      <div class="when">19:31 · Answering its questions</div>
+      <blockquote>“Go with option 2: when today's lessons are over, show a clear banner ‘Demo: today's lessons are over, showing tomorrow’ … Keep it clearly labelled as a demo aid, not a feature.”</blockquote>
+      <p class="led">→ The evening demo banner, plus four logged decisions (90-min slots, no instructors, today-only view, tap-to-call).</p>
+    </div>
+    <div class="prompt">
+      <div class="when">20:12 · Phone-test fixes</div>
+      <blockquote>“Now make these fixes to index.html from my phone test. They protect against wet-finger mis-taps, so they're within the case's constraint: 1. Undo a move … 2. Separate call from move … 3. Restore a cancelled session …”</blockquote>
+      <p class="led">→ Commit b4b3a33: Undo, a “Move to:” heading and Restore session, with all 131 checks passing.</p>
+    </div>
+    <div class="prompt">
+      <div class="when">20:28 · Retest</div>
+      <blockquote>“My eye goes to the blue move buttons before the white Call button, but Niamh calls first, then moves … Make the Call button stand out more.”</blockquote>
+      <p class="led">→ Commit 03a21a8: Call became a solid green, taller button.</p>
+    </div>
+    <div class="prompt">
+      <div class="when">20:44 · Landing page</div>
+      <blockquote>“Build index.html in this repo: a landing page selling a generic version of the Atlantic Edge rebooking alpha, under the product name Rain Check … Speak to them, not to everyone, and not to Atlantic Edge.”</blockquote>
+      <p class="led">→ The Rain Check page, with every claim checked against the alpha or labelled planned.</p>
+    </div>
+    <div class="prompt">
+      <div class="when">20:54 · Notes page</div>
+      <blockquote>“Turn ../build-notes.md into notes.html … Tidy wording and spelling but keep my meaning. Keep ‘(invented)’ and ‘(assumption)’ labels …”</blockquote>
+      <p class="led">→ This page.</p>
+    </div>
+  </section>
+
+  <!-- Build timeline -->
+  <section id="timeline">
+    <h2>Build timeline</h2>
+    <p><em>All on 19 Oct 2026, from Claude Code session logs and both repos' git history.</em></p>
+    <div class="stats">
+      <div><b>18:31</b><span>Start (first project prompt)</span></div>
+      <div><b>~21:05</b><span>Finish, about 2 h 35 min</span></div>
+      <div><b>27</b><span>Prompts I sent (8 setup and notes, 15 demo, 4 landing page)</span></div>
+      <div><b>9 · 4</b><span>Commits: demo · landing page</span></div>
+    </div>
+    <ol class="timeline">
+      <li><time>17:47–17:53</time>Prep: installed the GitHub CLI and logged in</li>
+      <li><time>18:32</time>Created the project folder and two separate Git repos</li>
+      <li><time>18:39</time>First commits in both repos, using the private noreply email</li>
+      <li><time>18:43</time>GitHub Pages switched on for both repos</li>
+      <li><time>19:03</time>build-notes.md structured</li>
+      <li><time>19:12</time>CLAUDE.md committed (scope and design rules)</li>
+      <li><time>19:16–19:21</time>Plan mode: plan proposed and approved</li>
+      <li><time>19:27–19:45</time>Alpha built in five committed steps (skeleton, Today, Rebook, Money, polish)</li>
+      <li><time>20:10</time>Phone test logged, word for word</li>
+      <li><time>20:17</time>Phone-test fixes: Undo, Move to:, Restore session</li>
+      <li><time>20:33</time>Call made the strongest button</li>
+      <li><time>20:40</time>Task 1 written up</li>
+      <li><time>20:47</time>Rain Check landing page live</li>
+      <li><time>20:56</time>Behind the build page live</li>
+      <li><time>21:03</time>Prompts and timeline added from the session logs</li>
+    </ol>
   </section>
 
   <!-- What Claude Code got wrong or caught -->
@@ -299,7 +396,7 @@
     </div>
 
     <details>
-      <summary>Raw notes from the phone test</summary>
+      <summary>My phone test notes (lightly tidied for spelling)</summary>
       <div class="raw">
         <p>The first thing I noticed is a big yellow banner that says "Demo: today's lessons are over, showing tomorrow. Demo aid only – not part of app."</p>
         <p>I see three nice big tabs at the bottom: "Today", "Rebook" and "Money".</p>
