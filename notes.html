@@ -172,8 +172,8 @@
   <section id="hunch">
     <h2>Hunch (my starting thinking)</h2>
     <div class="card lead">
-      <p>I was thinking about adventure centres that run outdoor activities. Their business depends heavily on the weather, and in Ireland the weather is very unpredictable. Customers cancel at the last minute, and the business sometimes has to cancel prepaid sessions too.</p>
-      <p>Time works like stock, with one difference: you can't store it. Any hour or day that isn't sold is business lost for good. Companies like this need a way to recover that loss, or reduce it, as quickly and easily as possible.</p>
+      <p>I am thinking in terms of adventure centres, which run outdoor activities. Their business is fairly reliant on the weather for the most part, and in Ireland that's very unpredictable. So of course people cancel at the last minute, and the business can cancel prepaid events too.</p>
+      <p>Time is like "stock"; the only difference is that I can't store time, so hours or days not sold are lost business. Companies like this need a way to recover or reduce that loss as easily and as quickly as possible.</p>
     </div>
   </section>
 
@@ -193,7 +193,7 @@
       </dl>
     </div>
 
-    <h3>Their pain in their own words</h3>
+    <h3>Their pain in their own words (invented quotes, labelled as invented)</h3>
     <blockquote class="quote">
       <p>“When the forecast turns, I lose my evening to WhatsApp — and I still lose a few groups who just never come back.”</p>
       <span class="label">(invented)</span>
@@ -212,13 +212,13 @@
       </dl>
     </div>
 
-    <h3>Existing products</h3>
+    <h3>Existing products (two real ones, each with link and date checked)</h3>
     <ul>
       <li><strong>FareHarbor</strong> (<a href="https://fareharbor.com" target="_blank" rel="noopener">fareharbor.com</a>, checked 19 Oct 2026): online booking software for tours and activities. It takes and manages bookings, but it's a whole platform, not a quick phone tool for rebooking a washed-out day. The review site Software Advice reports that booking fees are often passed on to customers (<a href="https://www.softwareadvice.com/ticketing/fareharbor-profile/" target="_blank" rel="noopener">Software Advice profile</a>, checked 19 Oct 2026).</li>
       <li><strong>Starboard Suite weather cancellation guide</strong> (<a href="https://support.starboardsuite.com/en/articles/942469-how-to-cancel-an-entire-event-eg-due-to-weather" target="_blank" rel="noopener">How to cancel an entire event</a>, checked 19 Oct 2026): block the event, email all customers, phone those who don't reply, and rebook each one by hand.</li>
     </ul>
 
-    <h3>Business model (assumption)</h3>
+    <h3>Business model (assumption, with one line of reasoning)</h3>
     <p>€99 set-up + €29/month. Recovering one lost group of three a month (€135) more than covers it.</p>
 
     <h3>Lean PRD</h3>
@@ -353,10 +353,11 @@
   <!-- Alpha test -->
   <section id="alpha" class="alpha">
     <h2>Alpha test</h2>
-    <p>Phone test of the demo, one-handed, in the evening.</p>
+    <p>Resolved: Undo added after the phone test (see What I changed).</p>
 
     <div class="card">
       <h3>What I tried</h3>
+      <p>Phone test of demo commit 83ec2ef, one-handed, in the evening.</p>
       <ul>
         <li>The banner correctly showed tomorrow's sessions after 16:30.</li>
         <li>The three large tabs at the bottom were easy to reach.</li>
@@ -386,12 +387,16 @@
 
     <div class="card changed">
       <h3>What I changed</h3>
+      <p>Fixed in demo commit b4b3a33:</p>
       <ul>
         <li>Added Undo on the "Moved…" message (10 seconds).</li>
         <li>Separated the Call button from the move buttons with a "Move to:" heading.</li>
         <li>Added Restore session for cancelled sessions whose bookings haven't been moved.</li>
-        <li>After the retest, made Call a solid green, taller button so it draws the eye before the blue move buttons, because Niamh calls before she moves.</li>
         <li>Kept "next three sessions" as the case specifies; choosing a later day and tracking calls are logged as planned.</li>
+      </ul>
+      <p>After the retest:</p>
+      <ul>
+        <li>Made Call a solid green, taller button so it draws the eye before the blue move buttons, because Niamh calls before she moves.</li>
       </ul>
     </div>
 
@@ -401,13 +406,13 @@
         <p>The first thing I noticed is a big yellow banner that says "Demo: today's lessons are over, showing tomorrow. Demo aid only – not part of app."</p>
         <p>I see three nice big tabs at the bottom: "Today", "Rebook" and "Money".</p>
         <p>It's showing me tomorrow's sessions on "Today". I like that it knows the real time and that the day is over.</p>
-        <p>It shows me six sessions, exactly 90 minutes apart. I found this odd because it assumes there's no lunch break, and that each slot includes set-up and pack-down time. It made me question how much of the 90 minutes is actually lesson. I don't have that context: I don't know if someone meets them before the lesson to talk about safety or help them get ready, or meets them after to take them where they need to go to get their equipment off.</p>
+        <p>It shows me six sessions, exactly 90 minutes apart. I found this odd because it assumes there's no lunch break, and that each slot includes start-up and shut-down time. It made me question how much of the 90 minutes is actually lesson. I don't have that context: I don't know if someone meets them before the lesson to talk about safety or help them get ready, or meets them after to take them where they need to go to get their equipment off.</p>
         <p>When I hit Cancel, which is nice and big, a pop-up asked me to confirm: "Cancel the 9:00 session?" It was for Tuesday, with two bookings of ten people in total, and two options: "No, keep session" (a white box) or "Yes, cancel 9:00" (a red box).</p>
         <p>After I confirmed, it showed the session as cancelled with a big "Go to Rebook" button.</p>
-        <p>On Rebook, I can very easily see who has been waiting longest; the first one shows a big red box saying they're over 48 hours. The Call button is white, and when I press it, it calls. That's good, but under it are the sessions I can move them to, all on Tuesday, which is tomorrow. That's great, but what if I want to rebook for Wednesday or another day? This feature is probably a miss, because I may already know all of tomorrow's sessions will be cancelled. Also, these buttons are blue and easier to hit by mistake than the white Call button. When I hit one of the blue buttons to move a group to a Tuesday session, there was no way to undo or go back, and no confirm option.</p>
+        <p>On Rebook, I can very easily see who has been waiting longest; the first one shows a big red box saying they're over 48 hours. The Call button is white, and when I press it, it calls. That's good, but under it are the sessions I can move them to, all on Tuesday, which is tomorrow. That's great, but what if I want to rebook for Wednesday or another day? This feature is probably a miss, because what if I already know all of tomorrow's sessions will be cancelled? Also, these buttons are blue and easier to hit by mistake than the white Call button. When I hit one of the blue buttons to move a group to a Tuesday session, there was no way to undo or go back, and no confirm option.</p>
         <p>The only way to fix it is to open the Today tab and cancel that session again so it's back on Rebook, but that doesn't solve the problem I had.</p>
-        <p>I went into Today and cancelled all of tomorrow's bookings. Now when I open Rebook, I only see options for Wednesday or Thursday. But what if I cancelled them all by mistake because I misread a weather alert?</p>
-        <p>And how do I know these people know their booking was cancelled? I can just hit Cancel without having called them or anything. That might still be worth showing.</p>
+        <p>I went into Today and cancelled all of tomorrow's bookings. Now when I open Rebook, I only see options for Wednesday or Thursday, for some reason. But what if I cancelled them all by mistake because I misread a weather alert?</p>
+        <p>And how do I know these people know their booking was cancelled? I can just hit Cancel. I don't know if I've called them or anything. I mean, that might still show up.</p>
         <p>The Money tab is good; it shows me how much is at risk if I don't rebook.</p>
       </div>
     </details>
