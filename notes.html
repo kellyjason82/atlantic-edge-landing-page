@@ -3,25 +3,345 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Behind the build – Rain Check</title>
+<title>Behind the build — Case F: Atlantic Edge Surf School, Lahinch</title>
+<meta name="description" content="How the Rain Check alpha and landing page were planned, built and tested.">
 <style>
+  :root {
+    --deep: #0b3a53;
+    --sea: #11698e;
+    --surf: #19a7ce;
+    --foam: #f4fbfd;
+    --sand: #f3e9d2;
+    --ink: #10232e;
+    --muted: #4a6372;
+    --line: #d5e6ee;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
-    margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    font-size: 18px; line-height: 1.55; color: #10232e; background: #f4fbfd;
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--foam);
   }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px; }
-  h1 { color: #0b3a53; }
-  a {
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3 { line-height: 1.25; }
+  h2 { font-size: 1.5rem; color: var(--deep); margin: 0 0 14px; }
+  h3 { font-size: 1.12rem; color: var(--deep); margin: 22px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  a { color: var(--sea); font-weight: 600; overflow-wrap: anywhere; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid #f5b400; outline-offset: 3px; }
+
+  /* Header with the same CSS-only waves as the landing page */
+  .hero {
+    position: relative; color: #fff; overflow: hidden;
+    background: linear-gradient(180deg, #08293b 0%, var(--deep) 45%, var(--sea) 100%);
+    padding: 28px 0 100px;
+  }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; left: -10%; width: 120%; height: 120px;
+    border-radius: 50% 50% 0 0 / 60px 60px 0 0;
+  }
+  .hero::before { bottom: -50px; background: rgba(25, 167, 206, .45); transform: rotate(-1.5deg); }
+  .hero::after  { bottom: -80px; background: var(--foam); transform: rotate(1deg); }
+  .back {
     display: inline-flex; align-items: center; min-height: 48px;
-    color: #11698e; font-weight: 700;
+    color: #fff; text-decoration: none; font-weight: 700; margin-bottom: 16px;
   }
+  .hero h1 { font-size: clamp(1.6rem, 6.5vw, 2.4rem); margin: 0 0 12px; }
+  .hero p { color: #d8eef6; margin: 0; }
+
+  /* Jump links */
+  nav.toc { margin: 8px 0 8px; }
+  nav.toc ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  nav.toc li { margin: 0; }
+  nav.toc a {
+    display: inline-flex; align-items: center; min-height: 48px; padding: 0 14px;
+    background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    text-decoration: none; font-size: .9rem; color: var(--deep);
+  }
+
+  section { padding: 28px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: 0; }
+  .card {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 20px; margin-bottom: 14px;
+  }
+  .card > :last-child { margin-bottom: 0; }
+  .lead { background: var(--sand); border-color: #e6d7b4; }
+  .quote {
+    background: #fff; border-left: 6px solid var(--surf); border-radius: var(--radius);
+    padding: 14px 18px; margin: 0 0 12px;
+  }
+  .quote p { margin: 0 0 4px; }
+  .label { font-size: .85rem; color: var(--muted); font-style: italic; }
+  dl { margin: 0; }
+  dt { font-weight: 700; color: var(--deep); margin-top: 16px; }
+  dt:first-child { margin-top: 0; }
+  dd { margin: 4px 0 0; }
+
+  .alpha h3 {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 6px;
+  }
+  .alpha h3::before {
+    content: ""; width: 10px; height: 26px; border-radius: 4px; background: var(--surf);
+  }
+  .alpha .broke h3::before { background: #b42318; }
+  .alpha .changed h3::before { background: #127a3f; }
+
+  details {
+    background: #fff; border: 1px dashed #9bb8c6; border-radius: var(--radius);
+    margin-top: 14px;
+  }
+  summary {
+    min-height: 56px; display: flex; align-items: center; padding: 0 20px;
+    font-weight: 700; color: var(--deep); cursor: pointer;
+  }
+  details[open] summary { border-bottom: 1px dashed #9bb8c6; }
+  details .raw { padding: 16px 20px 6px; color: var(--muted); }
+
+  .links a {
+    display: flex; align-items: center; min-height: 60px; padding: 12px 18px;
+    background: var(--sea); color: #fff; text-decoration: none;
+    border-radius: var(--radius); margin-bottom: 12px; font-size: 1rem;
+  }
+  .links a span { display: block; font-weight: 400; font-size: .85rem; opacity: .85; }
+
+  footer { padding: 24px 0 48px; text-align: center; }
+  footer a { display: inline-flex; align-items: center; min-height: 48px; padding: 0 12px; }
 </style>
 </head>
 <body>
+
+<header class="hero">
   <div class="wrap">
-    <h1>Behind the build</h1>
-    <p>Notes on how Rain Check was planned and built are coming soon.</p>
-    <a href="index.html">← Back to Rain Check</a>
+    <a class="back" href="index.html">← Rain Check</a>
+    <h1>Behind the build — Case F: Atlantic Edge Surf School, Lahinch</h1>
+    <p>How the rebooking alpha and the Rain Check landing page were planned, built and tested.</p>
   </div>
+</header>
+
+<main class="wrap">
+  <nav class="toc" aria-label="Sections">
+    <ul>
+      <li><a href="#hunch">Hunch</a></li>
+      <li><a href="#task1">Task 1</a></li>
+      <li><a href="#decisions">Decisions</a></li>
+      <li><a href="#prompts">Prompts</a></li>
+      <li><a href="#caught">What Claude Code caught</a></li>
+      <li><a href="#alpha">Alpha test</a></li>
+      <li><a href="#honesty">Honesty notes</a></li>
+      <li><a href="#links">Links</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hunch -->
+  <section id="hunch">
+    <h2>Hunch (my starting thinking)</h2>
+    <div class="card lead">
+      <p>I was thinking about adventure centres that run outdoor activities. Their business depends heavily on the weather, and in Ireland the weather is very unpredictable. Customers cancel at the last minute, and the business sometimes has to cancel prepaid sessions too.</p>
+      <p>Time works like stock, with one difference: you can't store it. Any hour or day that isn't sold is business lost for good. Companies like this need a way to recover that loss, or reduce it, as quickly and easily as possible.</p>
+    </div>
+  </section>
+
+  <!-- Task 1 -->
+  <section id="task1">
+    <h2>Task 1: Niche and product</h2>
+    <p><em>Task 1 was worked through with Claude in chat: the niche was developed from my hunch, the details were drafted with AI and edited by me, and I checked both products at the source on 19 Oct 2026.</em></p>
+
+    <div class="card">
+      <dl>
+        <dt>Niche (who they are)</dt>
+        <dd>Owner-run surf, SUP and kayak schools on Ireland's Wild Atlantic Way (1–10 staff), selling short group sessions on fixed daily slots, where swell and wind cancel whole days.</dd>
+        <dt>Buyer (who pays)</dt>
+        <dd>The owner.</dd>
+        <dt>User (who uses it daily)</dt>
+        <dd>The owner or head instructor, on the beach, on their phone.</dd>
+      </dl>
+    </div>
+
+    <h3>Their pain in their own words</h3>
+    <blockquote class="quote">
+      <p>“When the forecast turns, I lose my evening to WhatsApp — and I still lose a few groups who just never come back.”</p>
+      <span class="label">(invented)</span>
+    </blockquote>
+    <blockquote class="quote">
+      <p>“I'm standing on the beach in a wetsuit trying to work out who fits into Thursday's 2pm from a diary in the van.”</p>
+      <span class="label">(invented)</span>
+    </blockquote>
+
+    <div class="card">
+      <dl>
+        <dt>Type of technology</dt>
+        <dd>A phone-first internal rebooking tool that sits beside their existing booking method; not a full booking system.</dd>
+        <dt>How the niche handles this today</dt>
+        <dd>Bookings come in through a booking system, a website form or by phone. Weather cancellations are rebooked by phone and WhatsApp, working from a diary or spreadsheet.</dd>
+      </dl>
+    </div>
+
+    <h3>Existing products</h3>
+    <ul>
+      <li><strong>FareHarbor</strong> (<a href="https://fareharbor.com" target="_blank" rel="noopener">fareharbor.com</a>, checked 19 Oct 2026): online booking software for tours and activities. It takes and manages bookings, but it's a whole platform, not a quick phone tool for rebooking a washed-out day. The review site Software Advice reports that booking fees are often passed on to customers (<a href="https://www.softwareadvice.com/ticketing/fareharbor-profile/" target="_blank" rel="noopener">Software Advice profile</a>, checked 19 Oct 2026).</li>
+      <li><strong>Starboard Suite weather cancellation guide</strong> (<a href="https://support.starboardsuite.com/en/articles/942469-how-to-cancel-an-entire-event-eg-due-to-weather" target="_blank" rel="noopener">How to cancel an entire event</a>, checked 19 Oct 2026): block the event, email all customers, phone those who don't reply, and rebook each one by hand.</li>
+    </ul>
+
+    <h3>Business model (assumption)</h3>
+    <p>€99 set-up + €29/month. Recovering one lost group of three a month (€135) more than covers it.</p>
+
+    <h3>Lean PRD</h3>
+    <div class="card">
+      <dl>
+        <dt>Hypothesis</dt>
+        <dd>Owners of Wild Atlantic Way water-sports schools will join a waiting list for a phone-first tool that rebooks weather-cancelled lessons in minutes.</dd>
+        <dt>Audience</dt>
+        <dd>Owner-operators of surf, SUP and kayak schools on the Wild Atlantic Way, 1–10 staff.</dd>
+        <dt>Call to action</dt>
+        <dd>Join the waiting list.</dd>
+        <dt>Success measure</dt>
+        <dd>20 sign-ups or 10% of visitors within a month (needs a real form; the alpha form sends nothing).</dd>
+        <dt>Out of scope</dt>
+        <dd>Customer self-booking, payments, automatic SMS/WhatsApp, weather forecasts, multiple locations.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Decisions -->
+  <section id="decisions">
+    <h2>Decisions</h2>
+    <ul>
+      <li>Wrote a CLAUDE.md (instructions file) for the demo repo that fixes the agreed three-view scope, the one-handed wet-hands design rules and the privacy rules, so every later step is held to the same brief.</li>
+      <li>Sample data rebuilds from today's date each time it's reset, with cancellations already 60h and 30h old, so red and amber flags show the moment anyone opens the demo.</li>
+      <li>Slot times every 90 minutes from 09:00 to 16:30 (assumption), because the case doesn't give times and this fits six lessons into a daylight day.</li>
+      <li>Instructors left out of the alpha, because none of the three agreed views needs them; this keeps the session cards simple for quick use with wet hands.</li>
+      <li>The Today view shows only today's six sessions, because the case says "the day's sessions" and the Rebook view already looks ahead. Exception: after 16:30 it shows tomorrow's sessions under a labelled demo banner, so the demo always has something to cancel when reviewed in the evening.</li>
+      <li>Contact is shown as a tap-to-call phone number, because Niamh rebooks by phone. No SMS/WhatsApp sending, as that's beyond the agreed solution.</li>
+      <li>Cancel uses a confirm panel that slides up from the bottom, with an 84px "Yes, cancel" button and an equally big "No, keep the session" button. Tapping outside also backs out, so a wet-finger mis-tap can never cancel a session on its own.</li>
+      <li>Moving a booking is one tap with no confirm (as the case asks), but only sessions with room for the whole group are offered, and a green "Moved…" message confirms each move. Red and amber always carry a text label (OVER 48H / OVER 24H), not colour alone, for glare and colour-blindness.</li>
+      <li>The Money view puts the euro value at risk in a large dark panel at the top (people waiting × €45), so Niamh can see at a glance how much money is in the red. It also splits that value by over 48h / over 24h / new. This is slightly beyond the brief, but it's the same figure broken down by the existing red and amber rules, not a new feature. Reset demo data sits apart below a dashed line so it isn't tapped by mistake.</li>
+      <li>Final polish checked the app at 320, 360 and 414px phone widths (no sideways scrolling, every button 64px+, tab labels on one line), reran all 67 automated checks (all passing), and ran a privacy scan of the page, README and commit history before calling the alpha done. README updated with the live link, the three views, the wet-hands design and what the alpha doesn't do.</li>
+      <li>Product name Rain Check: an everyday phrase for postponing plans, which is exactly what the tool does for a washed-out lesson.</li>
+      <li>The landing page has one call to action (join the waiting list) plus a demo button. The hero button scrolls to the form rather than adding a second goal.</li>
+      <li>The waiting-list form has no field names and nowhere to send to, so it can't send data even by accident. It only shows a thank-you.</li>
+      <li>Restore is worded "before any of its groups are moved" because that's how the alpha behaves.</li>
+    </ul>
+  </section>
+
+  <!-- Prompts -->
+  <section id="prompts">
+    <h2>Prompts that mattered</h2>
+    <p><em>To be added.</em></p>
+  </section>
+
+  <!-- What Claude Code got wrong or caught -->
+  <section id="caught">
+    <h2>What Claude Code got wrong or caught</h2>
+    <ul>
+      <li>Flagged that my global Git name was my real name, and set each repo to use my GitHub username instead.</li>
+      <li>Tested its own build in a headless browser (18 automated rule checks). Its first test run failed because its test script cut the code in the wrong place; it spotted this, fixed the test, and all checks then passed. Example check: a group of 4 skipped slots with 2 free, 3 free and full, and was offered 13:30.</li>
+      <li>Flagged before step 2 that the demo would have nothing to cancel if opened after 16:30 (for example, by a lecturer reviewing in the evening), so we added a labelled demo banner showing tomorrow's sessions.</li>
+      <li>Flagged its own scope creep on the Money view (the split by age) and asked before keeping it.</li>
+      <li>While adding Undo, caught that the Undo button's style would stop it from ever hiding, and that Reset needed to clear any pending Undo. One older automated check also had to be updated because the new Restore button confused it. All 131 checks then passed.</li>
+      <li>Its first check that Call was taller than the move buttons was too loose: on a 375px phone some move labels wrapped to two lines (92px) and were taller than Call (80px). It tightened the check, made Call 88px and the move text slightly smaller, and the check then passed at 320, 375 and 414px.</li>
+      <li>Its first phone-size screenshot of the landing page looked cut off, because headless Edge won't go narrower than 504px. It re-checked the page at 320, 360 and 414px inside frames, and nothing scrolled sideways.</li>
+      <li>Flagged that the "in minutes" headline promise hadn't been timed, and suggested timing a rebook in the next phone test (done; see Alpha test).</li>
+    </ul>
+  </section>
+
+  <!-- Alpha test -->
+  <section id="alpha" class="alpha">
+    <h2>Alpha test</h2>
+    <p>Phone test of the demo, one-handed, in the evening.</p>
+
+    <div class="card">
+      <h3>What I tried</h3>
+      <ul>
+        <li>The banner correctly showed tomorrow's sessions after 16:30.</li>
+        <li>The three large tabs at the bottom were easy to reach.</li>
+        <li>Cancelled a session: the confirm panel showed the session and the number of bookings and people, with "No, keep session" and "Yes, cancel" buttons.</li>
+        <li>The cancelled session turned grey with a "Go to Rebook" button.</li>
+        <li>Rebook: the red OVER 48H label clearly showed who had waited longest.</li>
+        <li>Tap-to-call opened the phone dialler.</li>
+        <li>Moved a booking with one tap to a Tuesday session.</li>
+        <li>Cancelled all of Tuesday; Rebook then offered only Wednesday and Thursday (correct, as Tuesday had no room left).</li>
+        <li>The Money view updated as I cancelled and moved bookings.</li>
+        <li>Retested on my phone after the fixes: Undo on a move works for about 10 seconds, Restore session works, and Reset demo data is at the bottom of Money.</li>
+        <li>Timed a full rebook on my phone: cancelled one session and moved every group in under 60 seconds, so the "in minutes" headline is tested, not just a promise.</li>
+      </ul>
+    </div>
+
+    <div class="card broke">
+      <h3>One thing that broke or confused me</h3>
+      <ul>
+        <li>Moving a booking had no undo and no confirm. The blue move buttons sat right under the white Call button and were easier to hit by mistake. The only workaround was cancelling the session again, which didn't really fix it.</li>
+        <li>A session cancelled by mistake (for example, after misreading a weather alert) could not be restored.</li>
+        <li>Only the next three sessions are offered. If I know tomorrow will also be cancelled, I can't choose Wednesday or later.</li>
+        <li>There's no way to record whether I've called a customer, so I can't tell who knows their lesson was cancelled.</li>
+        <li>The 90-minute slots with no lunch break made me question how much is lesson time versus safety briefing, kit-up and kit-off.</li>
+        <li>After cancelling, "Go to Rebook" opens the Rebook tab but not the groups I just cancelled. Fresh cancellations sit at the bottom (oldest first), so I had to scroll to find them. Not fixed in the alpha.</li>
+      </ul>
+    </div>
+
+    <div class="card changed">
+      <h3>What I changed</h3>
+      <ul>
+        <li>Added Undo on the "Moved…" message (10 seconds).</li>
+        <li>Separated the Call button from the move buttons with a "Move to:" heading.</li>
+        <li>Added Restore session for cancelled sessions whose bookings haven't been moved.</li>
+        <li>After the retest, made Call a solid green, taller button so it draws the eye before the blue move buttons, because Niamh calls before she moves.</li>
+        <li>Kept "next three sessions" as the case specifies; choosing a later day and tracking calls are logged as planned.</li>
+      </ul>
+    </div>
+
+    <details>
+      <summary>Raw notes from the phone test</summary>
+      <div class="raw">
+        <p>The first thing I noticed is a big yellow banner that says "Demo: today's lessons are over, showing tomorrow. Demo aid only – not part of app."</p>
+        <p>I see three nice big tabs at the bottom: "Today", "Rebook" and "Money".</p>
+        <p>It's showing me tomorrow's sessions on "Today". I like that it knows the real time and that the day is over.</p>
+        <p>It shows me six sessions, exactly 90 minutes apart. I found this odd because it assumes there's no lunch break, and that each slot includes set-up and pack-down time. It made me question how much of the 90 minutes is actually lesson. I don't have that context: I don't know if someone meets them before the lesson to talk about safety or help them get ready, or meets them after to take them where they need to go to get their equipment off.</p>
+        <p>When I hit Cancel, which is nice and big, a pop-up asked me to confirm: "Cancel the 9:00 session?" It was for Tuesday, with two bookings of ten people in total, and two options: "No, keep session" (a white box) or "Yes, cancel 9:00" (a red box).</p>
+        <p>After I confirmed, it showed the session as cancelled with a big "Go to Rebook" button.</p>
+        <p>On Rebook, I can very easily see who has been waiting longest; the first one shows a big red box saying they're over 48 hours. The Call button is white, and when I press it, it calls. That's good, but under it are the sessions I can move them to, all on Tuesday, which is tomorrow. That's great, but what if I want to rebook for Wednesday or another day? This feature is probably a miss, because I may already know all of tomorrow's sessions will be cancelled. Also, these buttons are blue and easier to hit by mistake than the white Call button. When I hit one of the blue buttons to move a group to a Tuesday session, there was no way to undo or go back, and no confirm option.</p>
+        <p>The only way to fix it is to open the Today tab and cancel that session again so it's back on Rebook, but that doesn't solve the problem I had.</p>
+        <p>I went into Today and cancelled all of tomorrow's bookings. Now when I open Rebook, I only see options for Wednesday or Thursday. But what if I cancelled them all by mistake because I misread a weather alert?</p>
+        <p>And how do I know these people know their booking was cancelled? I can just hit Cancel without having called them or anything. That might still be worth showing.</p>
+        <p>The Money tab is good; it shows me how much is at risk if I don't rebook.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Honesty notes -->
+  <section id="honesty">
+    <h2>Honesty notes (what the alpha does not do)</h2>
+    <ul>
+      <li>Only the next three sessions with room are offered (as agreed in the case). Picking a later day is planned, not built.</li>
+      <li>The alpha doesn't record whether a customer has been called. Planned, not built.</li>
+      <li>The 90-minute slot length is our assumption; how much is lesson versus briefing time is an open question for Niamh.</li>
+      <li>"Go to Rebook" doesn't jump to the session just cancelled; planned improvement, not built.</li>
+    </ul>
+  </section>
+
+  <!-- Links -->
+  <section id="links" class="links">
+    <h2>Links</h2>
+    <a href="https://kellyjason82.github.io/atlantic-edge-demo/" target="_blank" rel="noopener">
+      <div>Demo (alpha, sample data)<span>kellyjason82.github.io/atlantic-edge-demo/</span></div>
+    </a>
+    <a href="https://kellyjason82.github.io/atlantic-edge-landing-page/">
+      <div>Landing page (Rain Check)<span>kellyjason82.github.io/atlantic-edge-landing-page/</span></div>
+    </a>
+  </section>
+</main>
+
+<footer>
+  <a href="index.html">← Back to Rain Check</a>
+</footer>
+
 </body>
 </html>
