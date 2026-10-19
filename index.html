@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en-IE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rain Check – rebook a washed-out day from your phone</title>
+<meta name="description" content="Rain Check helps owner-run surf, SUP and kayak schools on the Wild Atlantic Way rebook weather-cancelled lessons from a phone. Early alpha.">
+<style>
+  :root {
+    --deep: #0b3a53;
+    --sea: #11698e;
+    --surf: #19a7ce;
+    --foam: #f4fbfd;
+    --sand: #f3e9d2;
+    --ink: #10232e;
+    --muted: #4a6372;
+    --red: #b42318;
+    --amber: #9a6000;
+    --line: #d5e6ee;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--foam);
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3 { line-height: 1.2; margin: 0 0 12px; }
+  h2 { font-size: 1.6rem; color: var(--deep); }
+  p { margin: 0 0 14px; }
+  section { padding: 48px 0; }
+
+  /* Hero with CSS-only waves */
+  .hero {
+    position: relative;
+    color: #fff;
+    background: linear-gradient(180deg, #08293b 0%, var(--deep) 45%, var(--sea) 100%);
+    padding: 40px 0 120px;
+    overflow: hidden;
+  }
+  .hero::before, .hero::after {
+    content: "";
+    position: absolute;
+    left: -10%;
+    width: 120%;
+    height: 120px;
+    border-radius: 50% 50% 0 0 / 60px 60px 0 0;
+  }
+  .hero::before { bottom: -40px; background: rgba(25, 167, 206, .45); transform: rotate(-1.5deg); }
+  .hero::after  { bottom: -70px; background: var(--foam); transform: rotate(1deg); }
+  .brand {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-weight: 800; letter-spacing: .02em; font-size: 1.1rem;
+    margin-bottom: 28px;
+  }
+  .brand .dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff 0 18%, var(--surf) 19% 100%);
+  }
+  .hero h1 { font-size: clamp(1.75rem, 7vw, 2.2rem); margin-bottom: 16px; }
+  .hero p { font-size: 1.15rem; color: #d8eef6; max-width: 34ch; }
+  .for {
+    display: inline-block; margin-top: 8px; padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,.35); border-radius: 999px;
+    font-size: .9rem; color: #e6f5fa;
+  }
+
+  .btn {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 64px; padding: 14px 24px;
+    border: 0; border-radius: var(--radius);
+    font: inherit; font-weight: 700; font-size: 1.15rem;
+    text-decoration: none; cursor: pointer; text-align: center;
+  }
+  .btn-light { background: #fff; color: var(--deep); margin-top: 24px; max-width: 360px; }
+  .btn-main  { background: var(--sea); color: #fff; width: 100%; }
+  .btn-main:hover, .btn-light:hover { filter: brightness(1.08); }
+  .btn:focus-visible, input:focus-visible { outline: 3px solid #f5b400; outline-offset: 3px; }
+
+  /* Quotes */
+  .quote {
+    background: #fff; border-left: 6px solid var(--surf);
+    border-radius: var(--radius); padding: 20px 20px 16px; margin: 0 0 16px;
+    box-shadow: 0 2px 10px rgba(11, 58, 83, .06);
+  }
+  .quote p { font-size: 1.15rem; margin-bottom: 8px; }
+  .label { font-size: .85rem; color: var(--muted); font-style: italic; }
+
+  /* Steps */
+  .steps { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+  .steps li {
+    position: relative; background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 20px 20px 20px 76px; margin-bottom: 14px;
+  }
+  .steps li::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 18px; top: 18px;
+    width: 42px; height: 42px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--deep); color: #fff; font-weight: 800;
+  }
+  .steps h3 { font-size: 1.15rem; color: var(--deep); margin-bottom: 6px; }
+  .steps p { margin: 0; color: var(--muted); }
+
+  .demo { background: var(--sand); }
+  .demo .note { color: var(--muted); font-size: .95rem; margin-top: 12px; text-align: center; }
+
+  /* Today / Planned */
+  .cols { display: grid; gap: 16px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+  .card h3 { font-size: 1.2rem; }
+  .card ul { margin: 0; padding-left: 0; list-style: none; }
+  .card li { padding: 8px 0 8px 32px; position: relative; border-top: 1px solid var(--line); }
+  .card li:first-child { border-top: 0; }
+  .today li::before { content: "✓"; position: absolute; left: 4px; color: #127a3f; font-weight: 800; }
+  .planned { background: #f6f8f9; border-style: dashed; }
+  .planned li { color: var(--muted); }
+  .planned li::before { content: "…"; position: absolute; left: 6px; font-weight: 800; }
+  .tag {
+    display: inline-block; font-size: .75rem; font-weight: 800; letter-spacing: .05em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tag-live { background: #dff3e7; color: #0d5c30; }
+  .tag-plan { background: #e7ecef; color: #3c4f5a; }
+  .chip { font-size: .8rem; font-weight: 800; padding: 1px 8px; border-radius: 6px; color: #fff; }
+  .chip-red { background: var(--red); }
+  .chip-amber { background: var(--amber); }
+
+  /* Price */
+  .price {
+    text-align: center; background: #fff; border: 2px solid var(--surf);
+    border-radius: var(--radius); padding: 28px 20px;
+  }
+  .price .amount { font-size: 2.2rem; font-weight: 800; color: var(--deep); margin: 4px 0; }
+  .price .amount small { font-size: 1.1rem; font-weight: 600; color: var(--muted); }
+
+  /* Form */
+  .signup { background: var(--deep); color: #fff; }
+  .signup h2 { color: #fff; }
+  .signup p { color: #d8eef6; }
+  label { display: block; font-weight: 600; margin: 16px 0 6px; }
+  input {
+    width: 100%; min-height: 60px; padding: 12px 16px;
+    border: 2px solid transparent; border-radius: 12px;
+    font: inherit; font-size: 1.1rem; color: var(--ink); background: #fff;
+  }
+  .signup .btn-main { background: var(--surf); color: #062433; margin-top: 24px; }
+  .small { font-size: .9rem; color: #b9dbe8; margin-top: 14px; }
+  .thanks {
+    background: #fff; color: var(--ink); border-radius: var(--radius); padding: 24px;
+    font-size: 1.15rem;
+  }
+  .thanks strong { color: var(--deep); }
+  .error { color: #ffd7d2; font-weight: 600; margin-top: 12px; }
+
+  footer { padding: 32px 0 48px; text-align: center; color: var(--muted); }
+  footer a {
+    display: inline-flex; align-items: center; min-height: 48px; padding: 0 12px;
+    color: var(--sea); font-weight: 700;
+  }
+
+  @media (min-width: 640px) {
+    .hero h1 { font-size: 2.9rem; }
+    .cols { grid-template-columns: 1fr 1fr; }
+    .demo .btn-main { max-width: 420px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><span class="dot" aria-hidden="true"></span>Rain Check</div>
+    <h1>Wind or swell wiped out tomorrow? Rebook the whole day from your phone in minutes, not a whole evening.</h1>
+    <p>A one-handed rebooking tool for surf, SUP and kayak schools on the Wild Atlantic Way. It sits beside the way you take bookings now.</p>
+    <span class="for">For owner-run schools, 1–10 staff</span>
+    <a class="btn btn-light" href="#join">Join the waiting list</a>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <h2>You know the feeling</h2>
+      <blockquote class="quote">
+        <p>“When the forecast turns, I lose my evening to WhatsApp — and I still lose a few groups who just never come back.”</p>
+        <span class="label">(illustrative quote)</span>
+      </blockquote>
+      <blockquote class="quote">
+        <p>“I'm standing on the beach in a wetsuit trying to work out who fits into Thursday's 2pm from a diary in the van.”</p>
+        <span class="label">(illustrative quote)</span>
+      </blockquote>
+      <p>Every group that never rebooks is a lesson you don't get paid for. Rain Check keeps them in one list until they're sorted.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li>
+          <h3>Cancel a session with one tap</h3>
+          <p>Tap Cancel, confirm with a big button, and every group in that session goes onto your Rebook list.</p>
+        </li>
+        <li>
+          <h3>Move each group with one tap</h3>
+          <p>Each group shows the next three sessions with room for everyone. Tap one to move them. Tapped the wrong one? Hit Undo.</p>
+        </li>
+        <li>
+          <h3>See the money still waiting</h3>
+          <p>One screen shows how much lesson money is still waiting to be rebooked, so you know when the job is done.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="demo" id="demo">
+    <div class="wrap">
+      <h2>Try it on your phone</h2>
+      <p>Cancel a session, move a group, watch the money figure change. Nothing you do there affects anyone.</p>
+      <a class="btn btn-main" href="https://kellyjason82.github.io/atlantic-edge-demo/" target="_blank" rel="noopener">Try the demo</a>
+      <p class="note">Early alpha with sample data: a made-up school, made-up bookings and made-up phone numbers. Opens in a new tab.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>What it does today, and what's planned</h2>
+      <div class="cols">
+        <div class="card today">
+          <h3>Today <span class="tag tag-live">In the alpha</span></h3>
+          <ul>
+            <li>Cancel a session with one tap (plus a big confirm)</li>
+            <li>Move each group to one of the next three sessions with room, with Undo</li>
+            <li>See how much money is still waiting to be rebooked</li>
+            <li><span class="chip chip-red">Red</span> and <span class="chip chip-amber">amber</span> flags for groups waiting too long</li>
+            <li>Tap-to-call each group</li>
+            <li>Restore a session cancelled by mistake (before any of its groups are moved)</li>
+            <li>Works one-handed, with big buttons</li>
+            <li>Saves on your device</li>
+          </ul>
+        </div>
+        <div class="card planned">
+          <h3>Planned <span class="tag tag-plan">Not built yet</span></h3>
+          <ul>
+            <li>Picking any later day</li>
+            <li>Marking who you've called</li>
+            <li>Sending texts</li>
+            <li>Syncing with your booking system</li>
+            <li>Multiple staff and devices</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <h2>Price</h2>
+      <div class="price">
+        <div class="amount">€99 <small>set-up</small></div>
+        <div class="amount">+ €29 <small>/ month</small></div>
+        <p class="label">Early-access pricing (assumption)</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="signup" id="join">
+    <div class="wrap">
+      <h2>Join the waiting list</h2>
+      <p>Be first to hear when Rain Check is ready for your school.</p>
+
+      <!-- No action and no field names: nothing is sent or stored. -->
+      <form id="waitlist" novalidate>
+        <label for="f-name">Your name</label>
+        <input id="f-name" type="text" autocomplete="name" required>
+
+        <label for="f-school">School name</label>
+        <input id="f-school" type="text" autocomplete="organization" required>
+
+        <label for="f-email">Email</label>
+        <input id="f-email" type="email" autocomplete="email" inputmode="email" required>
+
+        <p class="error" id="form-error" role="alert" hidden>Please fill in all three boxes with a valid email.</p>
+        <button class="btn btn-main" type="submit">Join the waiting list</button>
+        <p class="small">This early page doesn't send or store your details anywhere.</p>
+      </form>
+
+      <div class="thanks" id="thanks" hidden tabindex="-1" role="status">
+        <strong>Thanks, you're on the list.</strong>
+        <p style="margin:8px 0 0">(This is an early test page, so nothing was actually sent.)</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="notes.html">Behind the build</a>
+  </div>
+</footer>
+
+<script>
+  // Waiting-list form: checks the boxes, then shows a thank-you.
+  // It never sends the details anywhere.
+  const form = document.getElementById("waitlist");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const err = document.getElementById("form-error");
+    if (!form.checkValidity()) {
+      err.hidden = false;
+      return;
+    }
+    form.reset();
+    form.hidden = true;
+    const thanks = document.getElementById("thanks");
+    thanks.hidden = false;
+    thanks.focus();
+  });
+</script>
+</body>
+</html>
